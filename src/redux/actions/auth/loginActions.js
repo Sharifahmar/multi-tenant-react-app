@@ -3,7 +3,10 @@ import { history } from "../../../history"
 import "firebase/auth"
 import "firebase/database"
 import axios from "axios"
+import { axiosInstance } from "../../../axios/axios-instance";
 import { config } from "../../../authServices/firebase/firebaseConfig"
+import { API_PATH_CONSTANTS } from "../../../constants/ApiPaths";
+import { ACTION_TYPES } from "../../../constants/ActionTypes";
 
 // Init firebase if not already initialized
 if (!firebase.apps.length) {
@@ -99,7 +102,7 @@ export const loginWithTwitter = () => {
     let provider = new firebase.auth.TwitterAuthProvider()
     firebaseAuth
       .signInWithPopup(provider)
-      .then(function(result) {
+      .then(function (result) {
         let token = result.credential.accessToken,
           user = result.user.email,
           name = result.user.displayName,
@@ -116,7 +119,7 @@ export const loginWithTwitter = () => {
         })
         history.push("/")
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error)
       })
   }
@@ -127,7 +130,7 @@ export const loginWithGoogle = () => {
     let provider = new firebase.auth.GoogleAuthProvider()
     firebaseAuth
       .signInWithPopup(provider)
-      .then(function(result) {
+      .then(function (result) {
         let token = result.credential.accessToken,
           user = result.user.email,
           name = result.user.displayName,
@@ -144,7 +147,7 @@ export const loginWithGoogle = () => {
         })
         history.push("/")
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error)
       })
   }
@@ -155,7 +158,7 @@ export const loginWithGithub = () => {
     let provider = new firebase.auth.GithubAuthProvider()
     firebaseAuth
       .signInWithPopup(provider)
-      .then(function(result) {
+      .then(function (result) {
         let token = result.credential.accessToken,
           user = result.user.email,
           name = result.additionalUserInfo.username,
@@ -173,7 +176,7 @@ export const loginWithGithub = () => {
         })
         history.push("/")
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error)
       })
   }
@@ -198,6 +201,33 @@ export const loginWithJWT = user => {
           })
 
           history.push("/")
+        }
+      })
+      .catch(err => console.log(err))
+  }
+}
+
+//============Multitenant application code don't remove=================
+export const loginWithJWTMultitenant = user => {
+  return dispatch => {
+    axiosInstance
+      .post(API_PATH_CONSTANTS.LOGIN_TOKEN, {
+        email: user.email,
+        password: user.password,
+        tenantName: user.tenantName
+      })
+      .then(response => {
+        var loggedInUser
+
+        if (response.data) {
+          loggedInUser = response.data.user
+
+          dispatch({
+            type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT,
+            payload: { loggedInUser, loggedInWith: "jwt" }
+          })
+
+          history.push("/dashboard")
         }
       })
       .catch(err => console.log(err))

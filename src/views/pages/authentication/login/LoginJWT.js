@@ -1,27 +1,111 @@
+import { Field, Form, Formik } from "formik"
+import { event } from "jquery"
 import React from "react"
-import { Link } from "react-router-dom"
-import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap"
-import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
-import { Mail, Lock, Check } from "react-feather"
-import { loginWithJWT } from "../../../../redux/actions/auth/loginActions"
 import { connect } from "react-redux"
+import { Button, CardBody, FormGroup } from "reactstrap"
+import * as Yup from "yup"
 import { history } from "../../../../history"
+import { loginWithJWTMultitenant } from "../../../../redux/actions/auth/loginActions"
+
+const formSchema = Yup.object().shape({
+  email: Yup.string().email("Please enter valid email").required("Please enter email"),
+  password: Yup.string().required("Please enter password"),
+  tenantName: Yup.string().required("Please enter Tenant Name")
+
+})
 
 class LoginJWT extends React.Component {
+
   state = {
-    email: "demo@demo.com",
-    password: "demodemo",
-    remember: false
+    email: "",
+    password: "",
+    tenantName: ""
   }
 
-  handleLogin = e => {
-    e.preventDefault()
-    this.props.loginWithJWT(this.state)
+  handleLogin = () => {
+    // e.preventDefault()
+    this.props.loginWithJWTMultitenant(this.state)
   }
   render() {
     return (
       <React.Fragment>
         <CardBody className="pt-1">
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+              tenantName: ""
+            }}
+            onSubmit={(values, { setSubmitting, resetForm }) => {
+
+              this.setState({ email: values.email, password: values.password, tenantName: values.tenantName.toLowerCase() });
+              this.handleLogin();
+
+            }}
+            validationSchema={formSchema}
+          >
+            {({ errors, touched, isValid, dirty, handleSubmit }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                <FormGroup>
+                  <Field
+                    name="email"
+                    id="email"
+                    placeholder="Enter Email"
+                    type="email"
+                    className={`form-control ${errors.email &&
+                      touched.email &&
+                      "is-invalid"}`}
+                  />
+                  {errors.email && touched.email ? (
+                    <div className="text-danger mt-25">{errors.email}</div>
+                  ) : null}
+                </FormGroup>
+                <FormGroup>
+                  <Field
+                    name="password"
+                    id="password"
+                    placeholder="Enter Password"
+                    type="password"
+                    className={`form-control ${errors.password &&
+                      touched.password &&
+                      "is-invalid"}`}
+                  />
+                  {errors.password && touched.password ? (
+                    <div className="text-danger mt-25">{errors.password}</div>
+                  ) : null}
+                </FormGroup>
+                <FormGroup>
+                  <Field
+                    name="tenantName"
+                    id="tenantName"
+                    placeholder="Enter Tenant Name"
+                    type="text"
+                    className={`form-control ${errors.tenantName &&
+                      touched.tenantName &&
+                      "is-invalid"}`}
+                  />
+                  {errors.tenantName && touched.tenantName ? (
+                    <div className="text-danger mt-25">{errors.tenantName}</div>
+                  ) : null}
+                </FormGroup>
+                <div className="d-flex justify-content-center">
+                  <Button.Ripple color="primary" type="submit" disabled={!(isValid && dirty)} >
+                    Login
+                  </Button.Ripple>
+                </div>
+              </Form>
+            )}
+          </Formik>
+
+          {/*
+          
+          onClick={e => {
+                    e.preventDefault()
+                    history.push("/dashboard")
+                  }}
+          
+          
+          
           <Form action="/" onSubmit={this.handleLogin}>
             <FormGroup className="form-label-group position-relative has-icon-left">
               <Input
@@ -49,33 +133,12 @@ class LoginJWT extends React.Component {
               </div>
               <Label>Password</Label>
             </FormGroup>
-            <FormGroup className="d-flex justify-content-between align-items-center">
-              <Checkbox
-                color="primary"
-                icon={<Check className="vx-icon" size={16} />}
-                label="Remember me"
-                defaultChecked={false}
-                onChange={this.handleRemember}
-              />
-              <div className="float-right">
-                <Link to="/pages/forgot-password">Forgot Password?</Link>
-              </div>
-            </FormGroup>
-            <div className="d-flex justify-content-between">
-              <Button.Ripple
-                color="primary"
-                outline
-                onClick={() => {
-                  history.push("/pages/register")
-                }}
-              >
-                Register
-              </Button.Ripple>
+            <div className="d-flex justify-content-center">
               <Button.Ripple color="primary" type="submit">
                 Login
               </Button.Ripple>
             </div>
-          </Form>
+          </Form> */}
         </CardBody>
       </React.Fragment>
     )
@@ -86,4 +149,4 @@ const mapStateToProps = state => {
     values: state.auth.login
   }
 }
-export default connect(mapStateToProps, { loginWithJWT })(LoginJWT)
+export default connect(mapStateToProps, { loginWithJWTMultitenant })(LoginJWT)

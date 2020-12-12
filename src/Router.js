@@ -174,9 +174,8 @@ const resetPassword = lazy(() =>
 const register = lazy(() =>
   import("./views/pages/authentication/register/Register")
 )
-const accessControl = lazy(() =>
-  import("./extensions/access-control/AccessControl")
-)
+const accessControl = lazy(() => import("./extensions/access-control/AccessControl"))
+//const tenant = lazy(() => import("./views/pages/Tenant/Tenant"))
 // Set Layout and Component Using App Route
 const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   <Route
@@ -189,8 +188,8 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
               fullLayout === true
                 ? context.fullLayout
                 : context.state.activeLayout === "horizontal"
-                ? context.horizontalLayout
-                : context.VerticalLayout
+                  ? context.horizontalLayout
+                  : context.VerticalLayout
             return (
               <LayoutTag {...props} permission={props.user}>
                 <Suspense fallback={<Spinner />}>
@@ -218,7 +217,8 @@ class AppRouter extends React.Component {
       // Set the directory path if you are deploying in sub-folder
       <Router history={history}>
         <Switch>
-          <AppRoute exact path="/" component={analyticsDashboard} />
+          <AppRoute exact path="/" component={Login} fullLayout />
+          <AppRoute exact path="/dashboard" component={analyticsDashboard} />
           <AppRoute
             path="/ecommerce-dashboard"
             component={ecommerceDashboard}
