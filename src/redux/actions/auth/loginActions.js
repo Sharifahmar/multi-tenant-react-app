@@ -194,7 +194,7 @@ export const loginWithJWT = user => {
 
         if (response.data) {
           loggedInUser = response.data.user
-
+          sessionStorage.setItem('token', response);
           dispatch({
             type: "LOGIN_WITH_JWT",
             payload: { loggedInUser, loggedInWith: "jwt" }
@@ -217,20 +217,23 @@ export const loginWithJWTMultitenant = user => {
         tenantName: user.tenantName
       })
       .then(response => {
-        var loggedInUser
-
         if (response.data) {
-          loggedInUser = response.data.user
-
           dispatch({
-            type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT,
-            payload: { loggedInUser, loggedInWith: "jwt" }
+            type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_SUCCESS,
+            payload: response.data
           })
-
-          history.push("/dashboard")
+          history.push("/dashboard");
         }
       })
-      .catch(err => console.log(err))
+      .catch(error => {
+        console.log("error+++++++++++" + JSON.stringify(error))
+        if (error.message) {
+          dispatch({
+            type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_FAIL,
+            payload: error.message
+          })
+        }
+      })
   }
 }
 

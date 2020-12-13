@@ -8,9 +8,9 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(request => {
     const token = sessionStorage.getItem('token');
     if (token) {
-        axiosInstance.defaults.headers.common[ 'Authorization' ] = token;
+        request.headers.Authorization = 'Bearer ' + token;
     } else {
-        axiosInstance.defaults.headers.common[ 'Authorization' ] = 'Tenant ' + request.data.tenantName;
+        request.headers.Authorization = 'Tenant ' + request.data.tenantName;
     }
     return request;
 }, error => {

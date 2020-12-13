@@ -1,4 +1,12 @@
-export const login = (state = { userRole: "admin" }, action) => {
+import { ACTION_TYPES } from "../../../constants/ActionTypes";
+
+const initialState = {
+  successResponse: null,
+  errorResponse: null,
+  isLogin: false
+}
+
+export const login = (state = initialState, action) => {
   switch (action.type) {
     case "LOGIN_WITH_EMAIL": {
       return { ...state, values: action.payload }
@@ -24,9 +32,21 @@ export const login = (state = { userRole: "admin" }, action) => {
     case "LOGOUT_WITH_FIREBASE": {
       return { ...state, values: action.payload }
     }
-    case "CHANGE_ROLE": {
-      return { ...state, userRole: action.userRole }
+    // ==============MULTITENANT-JWT==================
+    case ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_SUCCESS: {
+      const loginResp = {
+        ...action.payload,
+      };
+      return { ...state, successResponse: loginResp, isLogin: true }
     }
+
+    case ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_FAIL: {
+      const errorResp = {
+        ...action.payload,
+      };
+      return { ...state, errorResponse: errorResp }
+    }
+
     default: {
       return state
     }
