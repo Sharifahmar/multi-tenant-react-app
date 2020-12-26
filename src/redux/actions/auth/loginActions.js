@@ -222,15 +222,13 @@ export const loginWithJWTMultitenant = user => {
             type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_SUCCESS,
             payload: response.data
           })
-          history.push("/dashboard");
         }
       })
       .catch(error => {
-        console.log("error+++++++++++" + JSON.stringify(error))
-        if (error.message) {
+        if (error.response) {
           dispatch({
             type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_FAIL,
-            payload: error.message
+            payload: error.response.data.message
           })
         }
       })

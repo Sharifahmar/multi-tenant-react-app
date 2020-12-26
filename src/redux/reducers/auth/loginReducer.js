@@ -3,7 +3,7 @@ import { ACTION_TYPES } from "../../../constants/ActionTypes";
 const initialState = {
   successResponse: null,
   errorResponse: null,
-  isLogin: false
+  isLoggedIn: false
 }
 
 export const login = (state = initialState, action) => {
@@ -37,14 +37,11 @@ export const login = (state = initialState, action) => {
       const loginResp = {
         ...action.payload,
       };
-      return { ...state, successResponse: loginResp, isLogin: true }
+      return { ...state, successResponse: loginResp, isLoggedIn: true, errorResponse: null }
     }
 
     case ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_FAIL: {
-      const errorResp = {
-        ...action.payload,
-      };
-      return { ...state, errorResponse: errorResp }
+      return { ...state, successResponse: null, isLoggedIn: false, errorResponse: action.payload }
     }
 
     default: {

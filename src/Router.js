@@ -218,7 +218,7 @@ class AppRouter extends React.Component {
       <Router history={history}>
         <Switch>
           <AppRoute exact path="/" component={Login} fullLayout />
-          <AppRoute exact path="/dashboard" component={analyticsDashboard} />
+          <AppRoute path="/dashboard" component={analyticsDashboard} />
           <AppRoute
             path="/ecommerce-dashboard"
             component={ecommerceDashboard}
