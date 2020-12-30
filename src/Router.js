@@ -202,12 +202,33 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
   />
 )
 
-const ProtectedRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={(props) => (
-    sessionStorage.getItem('token') !== null ?
-      <Component {...props} /> : <Redirect to={{ pathname: '/', state: { from: props.location } }} />
-  )
-  } />
+const ProtectedRoute = ({ component: Component, fullLayout, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => {
+      return (
+        sessionStorage.getItem('token') !== null ?
+          <ContextLayout.Consumer>
+            {context => {
+              let LayoutTag =
+                fullLayout === true
+                  ? context.fullLayout
+                  : context.state.activeLayout === "horizontal"
+                    ? context.horizontalLayout
+                    : context.VerticalLayout
+              return (
+                <LayoutTag {...props}>
+                  <Suspense fallback={<Spinner />}>
+                    <Component {...props} />
+                  </Suspense>
+                </LayoutTag>
+              )
+            }}
+          </ContextLayout.Consumer>
+          : <Redirect to={{ pathname: '/', state: { from: props.location } }} />
+      )
+    }}
+  />
 );
 
 class AppRouter extends React.Component {

@@ -241,7 +241,7 @@ export const logoutWithJWT = () => {
   return dispatch => {
     dispatch({ type: ACTION_TYPES.LOGOUT_WITH_JWT_MULTITENANT_SUCCESS, payload: null })
     sessionStorage.clear();
-    history.push("/pages/login");
+    history.push("/");
   }
 }
 

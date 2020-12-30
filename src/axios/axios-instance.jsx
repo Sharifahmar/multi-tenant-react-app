@@ -1,4 +1,5 @@
 import axios from "axios";
+import { history } from "../history"
 
 // Set config defaults when creating the instance
 export const axiosInstance = axios.create({
@@ -14,6 +15,14 @@ axiosInstance.interceptors.request.use(request => {
     }
     return request;
 }, error => {
-    // Do something with request error
+    return Promise.reject(error);
+});
+
+axiosInstance.interceptors.response.use(response => {
+    return response;
+}, error => {
+    if (error.response.status === 401) {
+        history.push("/");
+    }
     return Promise.reject(error);
 });
