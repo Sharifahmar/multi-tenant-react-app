@@ -26,9 +26,6 @@ export const login = (state = initialState, action) => {
     case "LOGIN_WITH_JWT": {
       return { ...state, values: action.payload }
     }
-    case "LOGOUT_WITH_JWT": {
-      return { ...state, values: action.payload }
-    }
     case "LOGOUT_WITH_FIREBASE": {
       return { ...state, values: action.payload }
     }
@@ -42,6 +39,10 @@ export const login = (state = initialState, action) => {
 
     case ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_FAIL: {
       return { ...state, successResponse: null, isLoggedIn: false, errorResponse: action.payload }
+    }
+
+    case ACTION_TYPES.LOGOUT_WITH_JWT_MULTITENANT_SUCCESS: {
+      return { ...state, successResponse: action.payload, isLoggedIn: false, errorResponse: null }
     }
 
     default: {

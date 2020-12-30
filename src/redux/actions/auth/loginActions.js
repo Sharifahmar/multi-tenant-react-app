@@ -218,10 +218,12 @@ export const loginWithJWTMultitenant = user => {
       })
       .then(response => {
         if (response.data) {
+          sessionStorage.setItem("token", response.data.accessToken);
           dispatch({
             type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_SUCCESS,
             payload: response.data
           })
+          history.push("/dashboard")
         }
       })
       .catch(error => {
@@ -237,8 +239,9 @@ export const loginWithJWTMultitenant = user => {
 
 export const logoutWithJWT = () => {
   return dispatch => {
-    dispatch({ type: "LOGOUT_WITH_JWT", payload: {} })
-    history.push("/pages/login")
+    dispatch({ type: ACTION_TYPES.LOGOUT_WITH_JWT_MULTITENANT_SUCCESS, payload: null })
+    sessionStorage.clear();
+    history.push("/pages/login");
   }
 }
 

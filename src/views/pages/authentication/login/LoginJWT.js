@@ -1,12 +1,12 @@
 import { Field, Form, Formik } from "formik"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { AlertCircle } from "react-feather"
 import { connect } from "react-redux"
-import { Button, CardBody, FormGroup, Alert } from "reactstrap"
+import { Alert, Button, CardBody, FormGroup } from "reactstrap"
 import * as Yup from "yup"
-import { loginWithJWTMultitenant } from "../../../../redux/actions/auth/loginActions"
-import { MESSAGES_CONSTANTS } from "../../../../constants/Messages";
-import { history } from "../../../../history"
+import { MESSAGES_CONSTANTS } from "../../../../constants/Messages"
+import { loginWithJWTMultitenant, logoutWithJWT } from "../../../../redux/actions/auth/loginActions"
+//import { history } from "../../../../history"
 
 const formSchema = Yup.object().shape({
   email: Yup.string().email("Please enter valid email").required("Please enter email"),
@@ -17,6 +17,11 @@ const formSchema = Yup.object().shape({
 
 
 const LoginJWT = (props) => {
+  const [ isSubmit, setisSubmit ] = useState(false);
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
+
   return (
     <>
       <CardBody className="pt-1">
@@ -26,13 +31,10 @@ const LoginJWT = (props) => {
             password: "",
             tenantName: ""
           }}
-          onSubmit={(values, { setSubmitting }) => {
-            setSubmitting(true);
+          onSubmit={(values) => {
+            setisSubmit(true);
             props.loginWithJWTMultitenant(values);
-            // if (props.isLoggedIn) {
-            //   history.push('/dashboard');
-            // }
-            setSubmitting(false);
+            //setisSubmit(false);
           }}
           validationSchema={formSchema}
         >
@@ -103,7 +105,7 @@ const LoginJWT = (props) => {
                 ) : null}
 
               <div className="d-flex justify-content-center">
-                <Button.Ripple color="primary" type="submit" disabled={!(isValid && dirty)} >
+                <Button.Ripple color="primary" type="submit" disabled={!(isValid && dirty) || isSubmit} >
                   Login
                   </Button.Ripple>
               </div>
@@ -127,8 +129,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     loginWithJWTMultitenant: (values) => dispatch(loginWithJWTMultitenant(values)),
+    clearLoginStoreDetails: () => dispatch(logoutWithJWT())
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginJWT)

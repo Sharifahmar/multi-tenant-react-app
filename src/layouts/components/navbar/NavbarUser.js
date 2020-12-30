@@ -76,16 +76,12 @@ const UserDropdown = props => {
               returnTo: window.location.origin + process.env.REACT_APP_PUBLIC_PATH
             })
           } else {
-            const provider = props.loggedInWith
-            if (provider !== null) {
-              if (provider === "jwt") {
-                return props.logoutWithJWT()
-              }
-              if (provider === "firebase") {
-                return props.logoutWithFirebase()
-              }
+            //history.push("/pages/login");
+            const provider = props.loggedInWith.login.isLoggedIn;
+            if (provider) {
+              return props.logoutWithJWT();
             } else {
-              history.push("/pages/login")
+              history.push("/")
             }
           }
 
@@ -204,11 +200,10 @@ class NavbarUser extends React.PureComponent {
           >
             <Media className="text-center pr-0 mr-1" left>
               <img
-                className={`${
-                  item.imgClass
-                    ? item.imgClass + " cart-item-img"
-                    : "cart-item-img"
-                }`}
+                className={`${item.imgClass
+                  ? item.imgClass + " cart-item-img"
+                  : "cart-item-img"
+                  }`}
                 src={item.img}
                 width={item.width}
                 alt="Cart Item"
@@ -243,10 +238,10 @@ class NavbarUser extends React.PureComponent {
         <IntlContext.Consumer>
           {context => {
             let langArr = {
-              "en" : "English",
-              "de" : "German",
-              "fr" : "French",
-              "pt" : "Portuguese"
+              "en": "English",
+              "de": "German",
+              "fr": "French",
+              "pt": "Portuguese"
             }
             return (
               <Dropdown
@@ -261,7 +256,7 @@ class NavbarUser extends React.PureComponent {
                   className="nav-link"
                 >
                   <ReactCountryFlag
-                  className="country-flag"
+                    className="country-flag"
                     countryCode={
                       context.state.locale === "en"
                         ? "us"
@@ -270,7 +265,7 @@ class NavbarUser extends React.PureComponent {
                     svg
                   />
                   <span className="d-sm-inline-block d-none text-capitalize align-middle ml-50">
-                    {langArr[context.state.locale]}
+                    {langArr[ context.state.locale ]}
                   </span>
                 </DropdownToggle>
                 <DropdownMenu right>
@@ -331,7 +326,7 @@ class NavbarUser extends React.PureComponent {
               autoFocus={true}
               clearInput={this.state.navbarSearch}
               externalClick={e => {
-                this.setState({ navbarSearch : false })
+                this.setState({ navbarSearch: false })
               }}
               onKeyDown={e => {
                 if (e.keyCode === 27 || e.keyCode === 13) {
@@ -349,7 +344,7 @@ class NavbarUser extends React.PureComponent {
                 onSuggestionItemClick,
                 onSuggestionItemHover
               ) => {
-                const IconTag = Icon[item.icon ? item.icon : "X"]
+                const IconTag = Icon[ item.icon ? item.icon : "X" ]
                 return (
                   <li
                     className={classnames("suggestion-item", {
@@ -393,8 +388,8 @@ class NavbarUser extends React.PureComponent {
                               {item.by
                                 ? item.by
                                 : item.email
-                                ? item.email
-                                : null}
+                                  ? item.email
+                                  : null}
                             </small>
                           ) : null}
                         </div>
@@ -405,8 +400,8 @@ class NavbarUser extends React.PureComponent {
                             {item.size
                               ? item.size
                               : item.date
-                              ? item.date
-                              : null}
+                                ? item.date
+                                : null}
                           </small>
                         </div>
                       ) : null}
@@ -449,14 +444,12 @@ class NavbarUser extends React.PureComponent {
           <DropdownMenu
             tag="ul"
             right
-            className={`dropdown-menu-media dropdown-cart ${
-              this.state.shoppingCart.length === 0 ? "empty-cart" : ""
-            }`}
+            className={`dropdown-menu-media dropdown-cart ${this.state.shoppingCart.length === 0 ? "empty-cart" : ""
+              }`}
           >
             <li
-              className={`dropdown-menu-header ${
-                this.state.shoppingCart.length === 0 ? "d-none" : "d-block"
-              }`}
+              className={`dropdown-menu-header ${this.state.shoppingCart.length === 0 ? "d-none" : "d-block"
+                }`}
             >
               <div className="dropdown-header m-0">
                 <h3 className="white">
@@ -474,9 +467,8 @@ class NavbarUser extends React.PureComponent {
               {renderCartItems}
             </PerfectScrollbar>
             <li
-              className={`dropdown-menu-footer border-top ${
-                this.state.shoppingCart.length === 0 ? "d-none" : "d-block"
-              }`}
+              className={`dropdown-menu-footer border-top ${this.state.shoppingCart.length === 0 ? "d-none" : "d-block"
+                }`}
             >
               <div
                 className="dropdown-item p-1 text-center text-primary"
@@ -489,9 +481,8 @@ class NavbarUser extends React.PureComponent {
               </div>
             </li>
             <li
-              className={`empty-cart ${
-                this.state.shoppingCart.length > 0 ? "d-none" : "d-block"
-              } p-2`}
+              className={`empty-cart ${this.state.shoppingCart.length > 0 ? "d-none" : "d-block"
+                } p-2`}
             >
               Your Cart Is Empty
             </li>

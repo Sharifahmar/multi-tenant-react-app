@@ -1,12 +1,10 @@
-import React, { Suspense, lazy } from "react"
-import { Router, Switch, Route } from "react-router-dom"
-import { history } from "./history"
-import { connect } from "react-redux"
-import { Redirect } from "react-router-dom"
+import React, { lazy, Suspense } from "react"
+import { Redirect, Route, Router, Switch } from "react-router-dom"
 import Spinner from "./components/@vuexy/spinner/Loading-spinner"
+import { history } from "./history"
+import { ContextLayout } from "./utility/context/Layout"
 import knowledgeBaseCategory from "./views/pages/knowledge-base/Category"
 import knowledgeBaseQuestion from "./views/pages/knowledge-base/Questions"
-import { ContextLayout } from "./utility/context/Layout"
 
 // Route-based code splitting
 const analyticsDashboard = lazy(() =>
@@ -191,7 +189,7 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
                   ? context.horizontalLayout
                   : context.VerticalLayout
             return (
-              <LayoutTag {...props} permission={props.user}>
+              <LayoutTag {...props}>
                 <Suspense fallback={<Spinner />}>
                   <Component {...props} />
                 </Suspense>
@@ -203,13 +201,14 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
     }}
   />
 )
-const mapStateToProps = state => {
-  return {
-    user: state.auth.login.userRole
-  }
-}
 
-const AppRoute = connect(mapStateToProps)(RouteConfig)
+const ProtectedRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+    sessionStorage.getItem('token') !== null ?
+      <Component {...props} /> : <Redirect to={{ pathname: '/', state: { from: props.location } }} />
+  )
+  } />
+);
 
 class AppRouter extends React.Component {
   render() {
@@ -217,190 +216,190 @@ class AppRouter extends React.Component {
       // Set the directory path if you are deploying in sub-folder
       <Router history={history}>
         <Switch>
-          <AppRoute exact path="/" component={Login} fullLayout />
-          <AppRoute path="/dashboard" component={analyticsDashboard} />
-          <AppRoute
+          <RouteConfig exact path="/" component={Login} fullLayout />
+          <ProtectedRoute path="/dashboard" component={analyticsDashboard} />
+          <RouteConfig
             path="/ecommerce-dashboard"
             component={ecommerceDashboard}
           />
-          <AppRoute
+          <RouteConfig
             path="/email"
             exact
             component={() => <Redirect to="/email/inbox" />}
           />
-          <AppRoute path="/email/:filter" component={email} />
-          <AppRoute path="/chat" component={chat} />
-          <AppRoute
+          <RouteConfig path="/email/:filter" component={email} />
+          <RouteConfig path="/chat" component={chat} />
+          <RouteConfig
             path="/todo"
             exact
             component={() => <Redirect to="/todo/all" />}
           />
-          <AppRoute path="/todo/:filter" component={todo} />
-          <AppRoute path="/calendar" component={calendar} />
-          <AppRoute path="/ecommerce/shop" component={shop} />
-          <AppRoute path="/ecommerce/wishlist" component={wishlist} />
-          <AppRoute
+          <RouteConfig path="/todo/:filter" component={todo} />
+          <RouteConfig path="/calendar" component={calendar} />
+          <RouteConfig path="/ecommerce/shop" component={shop} />
+          <RouteConfig path="/ecommerce/wishlist" component={wishlist} />
+          <RouteConfig
             path="/ecommerce/product-detail"
             component={productDetail}
           />
-          <AppRoute
+          <RouteConfig
             path="/ecommerce/checkout"
             component={checkout}
             permission="admin"
           />
-          <AppRoute path="/data-list/list-view" component={listView} />
-          <AppRoute path="/data-list/thumb-view" component={thumbView} />
-          <AppRoute path="/ui-element/grid" component={grid} />
-          <AppRoute path="/ui-element/typography" component={typography} />
-          <AppRoute
+          <RouteConfig path="/data-list/list-view" component={listView} />
+          <RouteConfig path="/data-list/thumb-view" component={thumbView} />
+          <RouteConfig path="/ui-element/grid" component={grid} />
+          <RouteConfig path="/ui-element/typography" component={typography} />
+          <RouteConfig
             path="/ui-element/textutilities"
             component={textutilities}
           />
-          <AppRoute
+          <RouteConfig
             path="/ui-element/syntaxhighlighter"
             component={syntaxhighlighter}
           />
-          <AppRoute path="/colors/colors" component={colors} />
-          <AppRoute path="/icons/reactfeather" component={reactfeather} />
-          <AppRoute path="/cards/basic" component={basicCards} />
-          <AppRoute path="/cards/statistics" component={statisticsCards} />
-          <AppRoute path="/cards/analytics" component={analyticsCards} />
-          <AppRoute path="/cards/action" component={actionCards} />
-          <AppRoute path="/components/alerts" component={Alerts} />
-          <AppRoute path="/components/buttons" component={Buttons} />
-          <AppRoute path="/components/breadcrumbs" component={Breadcrumbs} />
-          <AppRoute path="/components/carousel" component={Carousel} />
-          <AppRoute path="/components/collapse" component={Collapse} />
-          <AppRoute path="/components/dropdowns" component={Dropdowns} />
-          <AppRoute path="/components/list-group" component={ListGroup} />
-          <AppRoute path="/components/modals" component={Modals} />
-          <AppRoute path="/components/pagination" component={Pagination} />
-          <AppRoute path="/components/nav-component" component={NavComponent} />
-          <AppRoute path="/components/navbar" component={Navbar} />
-          <AppRoute path="/components/tabs-component" component={Tabs} />
-          <AppRoute path="/components/pills-component" component={TabPills} />
-          <AppRoute path="/components/tooltips" component={Tooltips} />
-          <AppRoute path="/components/popovers" component={Popovers} />
-          <AppRoute path="/components/badges" component={Badge} />
-          <AppRoute path="/components/pill-badges" component={BadgePill} />
-          <AppRoute path="/components/progress" component={Progress} />
-          <AppRoute path="/components/media-objects" component={Media} />
-          <AppRoute path="/components/spinners" component={Spinners} />
-          <AppRoute path="/components/toasts" component={Toasts} />
-          <AppRoute
+          <RouteConfig path="/colors/colors" component={colors} />
+          <RouteConfig path="/icons/reactfeather" component={reactfeather} />
+          <RouteConfig path="/cards/basic" component={basicCards} />
+          <RouteConfig path="/cards/statistics" component={statisticsCards} />
+          <RouteConfig path="/cards/analytics" component={analyticsCards} />
+          <RouteConfig path="/cards/action" component={actionCards} />
+          <RouteConfig path="/components/alerts" component={Alerts} />
+          <RouteConfig path="/components/buttons" component={Buttons} />
+          <RouteConfig path="/components/breadcrumbs" component={Breadcrumbs} />
+          <RouteConfig path="/components/carousel" component={Carousel} />
+          <RouteConfig path="/components/collapse" component={Collapse} />
+          <RouteConfig path="/components/dropdowns" component={Dropdowns} />
+          <RouteConfig path="/components/list-group" component={ListGroup} />
+          <RouteConfig path="/components/modals" component={Modals} />
+          <RouteConfig path="/components/pagination" component={Pagination} />
+          <RouteConfig path="/components/nav-component" component={NavComponent} />
+          <RouteConfig path="/components/navbar" component={Navbar} />
+          <RouteConfig path="/components/tabs-component" component={Tabs} />
+          <RouteConfig path="/components/pills-component" component={TabPills} />
+          <RouteConfig path="/components/tooltips" component={Tooltips} />
+          <RouteConfig path="/components/popovers" component={Popovers} />
+          <RouteConfig path="/components/badges" component={Badge} />
+          <RouteConfig path="/components/pill-badges" component={BadgePill} />
+          <RouteConfig path="/components/progress" component={Progress} />
+          <RouteConfig path="/components/media-objects" component={Media} />
+          <RouteConfig path="/components/spinners" component={Spinners} />
+          <RouteConfig path="/components/toasts" component={Toasts} />
+          <RouteConfig
             path="/extra-components/auto-complete"
             component={AutoComplete}
           />
-          <AppRoute path="/extra-components/avatar" component={avatar} />
-          <AppRoute path="/extra-components/chips" component={chips} />
-          <AppRoute path="/extra-components/divider" component={divider} />
-          <AppRoute path="/forms/wizard" component={vuexyWizard} />
-          <AppRoute path="/forms/elements/select" component={select} />
-          <AppRoute path="/forms/elements/switch" component={switchComponent} />
-          <AppRoute path="/forms/elements/checkbox" component={checkbox} />
-          <AppRoute path="/forms/elements/radio" component={radio} />
-          <AppRoute path="/forms/elements/input" component={input} />
-          <AppRoute path="/forms/elements/input-group" component={group} />
-          <AppRoute
+          <RouteConfig path="/extra-components/avatar" component={avatar} />
+          <RouteConfig path="/extra-components/chips" component={chips} />
+          <RouteConfig path="/extra-components/divider" component={divider} />
+          <RouteConfig path="/forms/wizard" component={vuexyWizard} />
+          <RouteConfig path="/forms/elements/select" component={select} />
+          <RouteConfig path="/forms/elements/switch" component={switchComponent} />
+          <RouteConfig path="/forms/elements/checkbox" component={checkbox} />
+          <RouteConfig path="/forms/elements/radio" component={radio} />
+          <RouteConfig path="/forms/elements/input" component={input} />
+          <RouteConfig path="/forms/elements/input-group" component={group} />
+          <RouteConfig
             path="/forms/elements/number-input"
             component={numberInput}
           />
-          <AppRoute path="/forms/elements/textarea" component={textarea} />
-          <AppRoute path="/forms/elements/pickers" component={pickers} />
-          <AppRoute path="/forms/elements/input-mask" component={inputMask} />
-          <AppRoute path="/forms/layout/form-layout" component={layout} />
-          <AppRoute path="/forms/formik" component={formik} />{" "}
-          <AppRoute path="/tables/reactstrap" component={tables} />
-          <AppRoute path="/tables/react-tables" component={ReactTables} />
-          <AppRoute path="/tables/agGrid" component={Aggrid} />
-          <AppRoute path="/tables/data-tables" component={DataTable} />
-          <AppRoute path="/pages/profile" component={profile} />
-          <AppRoute path="/pages/faq" component={faq} />
-          <AppRoute
+          <RouteConfig path="/forms/elements/textarea" component={textarea} />
+          <RouteConfig path="/forms/elements/pickers" component={pickers} />
+          <RouteConfig path="/forms/elements/input-mask" component={inputMask} />
+          <RouteConfig path="/forms/layout/form-layout" component={layout} />
+          <RouteConfig path="/forms/formik" component={formik} />{" "}
+          <RouteConfig path="/tables/reactstrap" component={tables} />
+          <RouteConfig path="/tables/react-tables" component={ReactTables} />
+          <RouteConfig path="/tables/agGrid" component={Aggrid} />
+          <RouteConfig path="/tables/data-tables" component={DataTable} />
+          <RouteConfig path="/pages/profile" component={profile} />
+          <RouteConfig path="/pages/faq" component={faq} />
+          <RouteConfig
             path="/pages/knowledge-base"
             component={knowledgeBase}
             exact
           />
-          <AppRoute
+          <RouteConfig
             path="/pages/knowledge-base/category"
             component={knowledgeBaseCategory}
             exact
           />
-          <AppRoute
+          <RouteConfig
             path="/pages/knowledge-base/category/questions"
             component={knowledgeBaseQuestion}
           />
-          <AppRoute path="/pages/search" component={search} />
-          <AppRoute
+          <RouteConfig path="/pages/search" component={search} />
+          <RouteConfig
             path="/pages/account-settings"
             component={accountSettings}
           />
-          <AppRoute path="/pages/invoice" component={invoice} />
-          <AppRoute
+          <RouteConfig path="/pages/invoice" component={invoice} />
+          <RouteConfig
             path="/misc/coming-soon"
             component={comingSoon}
             fullLayout
           />
-          <AppRoute path="/misc/error/404" component={error404} fullLayout />
-          <AppRoute path="/pages/login" component={Login} fullLayout />
-          <AppRoute path="/pages/register" component={register} fullLayout />
-          <AppRoute
+          <RouteConfig path="/misc/error/404" component={error404} fullLayout />
+          <RouteConfig path="/pages/login" component={Login} fullLayout />
+          <RouteConfig path="/pages/register" component={register} fullLayout />
+          <RouteConfig
             path="/pages/forgot-password"
             component={forgotPassword}
             fullLayout
           />
-          <AppRoute
+          <RouteConfig
             path="/pages/lock-screen"
             component={lockScreen}
             fullLayout
           />
-          <AppRoute
+          <RouteConfig
             path="/pages/reset-password"
             component={resetPassword}
             fullLayout
           />
-          <AppRoute path="/misc/error/500" component={error500} fullLayout />
-          <AppRoute
+          <RouteConfig path="/misc/error/500" component={error500} fullLayout />
+          <RouteConfig
             path="/misc/not-authorized"
             component={authorized}
             fullLayout
           />
-          <AppRoute
+          <RouteConfig
             path="/misc/maintenance"
             component={maintenance}
             fullLayout
           />
-          <AppRoute path="/app/user/list" component={userList} />
-          <AppRoute path="/app/user/edit" component={userEdit} />
-          <AppRoute path="/app/user/view" component={userView} />
-          <AppRoute path="/charts/apex" component={apex} />
-          <AppRoute path="/charts/chartjs" component={chartjs} />
-          <AppRoute path="/charts/recharts" component={extreme} />
-          <AppRoute path="/maps/leaflet" component={leafletMaps} />
-          <AppRoute path="/extensions/sweet-alert" component={sweetAlert} />
-          <AppRoute path="/extensions/toastr" component={toastr} />
-          <AppRoute path="/extensions/slider" component={rcSlider} />
-          <AppRoute path="/extensions/file-uploader" component={uploader} />
-          <AppRoute path="/extensions/wysiwyg-editor" component={editor} />
-          <AppRoute path="/extensions/drag-and-drop" component={drop} />
-          <AppRoute path="/extensions/tour" component={tour} />
-          <AppRoute path="/extensions/clipboard" component={clipboard} />
-          <AppRoute path="/extensions/context-menu" component={menu} />
-          <AppRoute path="/extensions/swiper" component={swiper} />
-          <AppRoute
+          <RouteConfig path="/app/user/list" component={userList} />
+          <RouteConfig path="/app/user/edit" component={userEdit} />
+          <RouteConfig path="/app/user/view" component={userView} />
+          <RouteConfig path="/charts/apex" component={apex} />
+          <RouteConfig path="/charts/chartjs" component={chartjs} />
+          <RouteConfig path="/charts/recharts" component={extreme} />
+          <RouteConfig path="/maps/leaflet" component={leafletMaps} />
+          <RouteConfig path="/extensions/sweet-alert" component={sweetAlert} />
+          <RouteConfig path="/extensions/toastr" component={toastr} />
+          <RouteConfig path="/extensions/slider" component={rcSlider} />
+          <RouteConfig path="/extensions/file-uploader" component={uploader} />
+          <RouteConfig path="/extensions/wysiwyg-editor" component={editor} />
+          <RouteConfig path="/extensions/drag-and-drop" component={drop} />
+          <RouteConfig path="/extensions/tour" component={tour} />
+          <RouteConfig path="/extensions/clipboard" component={clipboard} />
+          <RouteConfig path="/extensions/context-menu" component={menu} />
+          <RouteConfig path="/extensions/swiper" component={swiper} />
+          <RouteConfig
             path="/extensions/access-control"
             component={accessControl}
           />
-          <AppRoute path="/extensions/i18n" component={i18n} />
-          <AppRoute path="/extensions/tree" component={tree} />
-          <AppRoute path="/extensions/import" component={Import} />
-          <AppRoute path="/extensions/export" component={Export} />
-          <AppRoute
+          <RouteConfig path="/extensions/i18n" component={i18n} />
+          <RouteConfig path="/extensions/tree" component={tree} />
+          <RouteConfig path="/extensions/import" component={Import} />
+          <RouteConfig path="/extensions/export" component={Export} />
+          <RouteConfig
             path="/extensions/export-selected"
             component={ExportSelected}
           />
-          <AppRoute path="/extensions/pagination" component={reactPaginate} />
-          <AppRoute component={error404} fullLayout />
+          <RouteConfig path="/extensions/pagination" component={reactPaginate} />
+          <RouteConfig component={error404} fullLayout />
         </Switch>
       </Router>
     )
