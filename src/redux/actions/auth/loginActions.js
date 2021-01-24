@@ -1,46 +1,46 @@
-import * as firebase from "firebase/app"
-import { history } from "../../../history"
-import "firebase/auth"
-import "firebase/database"
-import axios from "axios"
+import * as firebase from "firebase/app";
+import { history } from "../../../history";
+import "firebase/auth";
+import "firebase/database";
+import axios from "axios";
 import { axiosInstance } from "../../../axios/axios-instance";
-import { config } from "../../../authServices/firebase/firebaseConfig"
+import { config } from "../../../authServices/firebase/firebaseConfig";
 import { API_PATH_CONSTANTS } from "../../../constants/ApiPaths";
 import { ACTION_TYPES } from "../../../constants/ActionTypes";
 
 // Init firebase if not already initialized
 if (!firebase.apps.length) {
-  firebase.initializeApp(config)
+  firebase.initializeApp(config);
 }
 
-let firebaseAuth = firebase.auth()
+let firebaseAuth = firebase.auth();
 
 // const initAuth0 = new auth0.WebAuth(configAuth)
 
 export const submitLoginWithFireBase = (email, password, remember) => {
-  return dispatch => {
+  return (dispatch) => {
     let userEmail = null,
-      loggedIn = false
+      loggedIn = false;
     firebaseAuth
       .signInWithEmailAndPassword(email, password)
-      .then(result => {
-        firebaseAuth.onAuthStateChanged(user => {
+      .then((result) => {
+        firebaseAuth.onAuthStateChanged((user) => {
           result.user.updateProfile({
-            displayName: "Admin"
-          })
-          let name = result.user.displayName
+            displayName: "Admin",
+          });
+          let name = result.user.displayName;
           if (user) {
-            userEmail = user.email
-            loggedIn = true
+            userEmail = user.email;
+            loggedIn = true;
             dispatch({
               type: "LOGIN_WITH_EMAIL",
               payload: {
                 email: userEmail,
                 name,
                 isSignedIn: loggedIn,
-                loggedInWith: "firebase"
-              }
-            })
+                loggedInWith: "firebase",
+              },
+            });
           }
           if (user && remember) {
             firebase
@@ -54,59 +54,59 @@ export const submitLoginWithFireBase = (email, password, remember) => {
                     name,
                     isSignedIn: loggedIn,
                     remember: true,
-                    loggedInWith: "firebase"
-                  }
-                })
-              })
+                    loggedInWith: "firebase",
+                  },
+                });
+              });
           }
-          history.push("/")
-        })
+          history.push("/");
+        });
       })
-      .catch(error => {
-        console.log(error)
-      })
-  }
-}
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
 
 export const loginWithFB = () => {
-  return dispatch => {
-    let provider = new firebase.auth.FacebookAuthProvider()
+  return (dispatch) => {
+    let provider = new firebase.auth.FacebookAuthProvider();
     provider.setCustomParameters({
-      display: "popup"
-    })
+      display: "popup",
+    });
     firebaseAuth
       .signInWithPopup(provider)
-      .then(result => {
+      .then((result) => {
         // This gives you a Facebook Access Token. You can use it to access the Facebook API.
         let token = result.credential.accessToken,
           // The signed-in user info.
-          user = result.user.email
+          user = result.user.email;
         dispatch({
           type: "LOGIN_WITH_FB",
           payload: {
             user,
             token,
-            loggedInWith: "firebase"
-          }
-        })
-        if (user) history.push("/")
+            loggedInWith: "firebase",
+          },
+        });
+        if (user) history.push("/");
       })
-      .catch(error => {
-        console.log(error)
-      })
-  }
-}
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
 
 export const loginWithTwitter = () => {
-  return dispatch => {
-    let provider = new firebase.auth.TwitterAuthProvider()
+  return (dispatch) => {
+    let provider = new firebase.auth.TwitterAuthProvider();
     firebaseAuth
       .signInWithPopup(provider)
       .then(function (result) {
         let token = result.credential.accessToken,
           user = result.user.email,
           name = result.user.displayName,
-          photoUrl = result.user.photoURL
+          photoUrl = result.user.photoURL;
         dispatch({
           type: "LOGIN_WITH_TWITTER",
           payload: {
@@ -114,27 +114,27 @@ export const loginWithTwitter = () => {
             name,
             photoUrl,
             token,
-            loggedInWith: "firebase"
-          }
-        })
-        history.push("/")
+            loggedInWith: "firebase",
+          },
+        });
+        history.push("/");
       })
       .catch(function (error) {
-        console.log(error)
-      })
-  }
-}
+        console.log(error);
+      });
+  };
+};
 
 export const loginWithGoogle = () => {
-  return dispatch => {
-    let provider = new firebase.auth.GoogleAuthProvider()
+  return (dispatch) => {
+    let provider = new firebase.auth.GoogleAuthProvider();
     firebaseAuth
       .signInWithPopup(provider)
       .then(function (result) {
         let token = result.credential.accessToken,
           user = result.user.email,
           name = result.user.displayName,
-          photoUrl = result.user.photoURL
+          photoUrl = result.user.photoURL;
         dispatch({
           type: "LOGIN_WITH_GOOGLE",
           payload: {
@@ -142,27 +142,27 @@ export const loginWithGoogle = () => {
             name: name,
             photoUrl,
             token,
-            loggedInWith: "firebase"
-          }
-        })
-        history.push("/")
+            loggedInWith: "firebase",
+          },
+        });
+        history.push("/");
       })
       .catch(function (error) {
-        console.log(error)
-      })
-  }
-}
+        console.log(error);
+      });
+  };
+};
 
 export const loginWithGithub = () => {
-  return dispatch => {
-    let provider = new firebase.auth.GithubAuthProvider()
+  return (dispatch) => {
+    let provider = new firebase.auth.GithubAuthProvider();
     firebaseAuth
       .signInWithPopup(provider)
       .then(function (result) {
         let token = result.credential.accessToken,
           user = result.user.email,
           name = result.additionalUserInfo.username,
-          photoUrl = result.user.photoURL
+          photoUrl = result.user.photoURL;
 
         dispatch({
           type: "LOGIN_WITH_GITHUB",
@@ -171,87 +171,88 @@ export const loginWithGithub = () => {
             name,
             photoUrl,
             token,
-            loggedInWith: "firebase"
-          }
-        })
-        history.push("/")
+            loggedInWith: "firebase",
+          },
+        });
+        history.push("/");
       })
       .catch(function (error) {
-        console.log(error)
-      })
-  }
-}
+        console.log(error);
+      });
+  };
+};
 
-export const loginWithJWT = user => {
-  return dispatch => {
+export const loginWithJWT = (user) => {
+  return (dispatch) => {
     axios
       .post("/api/authenticate/login/user", {
         email: user.email,
-        password: user.password
+        password: user.password,
       })
-      .then(response => {
-        var loggedInUser
+      .then((response) => {
+        var loggedInUser;
 
         if (response.data) {
-          loggedInUser = response.data.user
-          sessionStorage.setItem('token', response);
+          loggedInUser = response.data.user;
+          sessionStorage.setItem("token", response);
           dispatch({
             type: "LOGIN_WITH_JWT",
-            payload: { loggedInUser, loggedInWith: "jwt" }
-          })
+            payload: { loggedInUser, loggedInWith: "jwt" },
+          });
 
-          history.push("/")
+          history.push("/");
         }
       })
-      .catch(err => console.log(err))
-  }
-}
+      .catch((err) => console.log(err));
+  };
+};
 
 //============Multitenant application code don't remove=================
-export const loginWithJWTMultitenant = user => {
-  return dispatch => {
+export const loginWithJWTMultitenant = (user) => {
+  return (dispatch) => {
     axiosInstance
       .post(API_PATH_CONSTANTS.LOGIN_TOKEN, {
         email: user.email,
         password: user.password,
-        tenantName: user.tenantName
+        tenantName: user.tenantName,
       })
-      .then(response => {
+      .then((response) => {
         if (response.data) {
-          sessionStorage.setItem("token", response.data.accessToken);
           dispatch({
             type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_SUCCESS,
-            payload: response.data
-          })
-          history.push("/dashboard")
+            payload: response.data,
+          });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           dispatch({
             type: ACTION_TYPES.LOGIN_WITH_JWT_MULTITENANT_FAIL,
-            payload: error.response.data.message
-          })
+            payload: error.response.data.message,
+          });
         }
-      })
-  }
-}
+      });
+  };
+};
 
 export const logoutWithJWT = () => {
-  return dispatch => {
-    dispatch({ type: ACTION_TYPES.LOGOUT_WITH_JWT_MULTITENANT_SUCCESS, payload: null })
+  return (dispatch) => {
+    dispatch({
+      type: ACTION_TYPES.LOGOUT_WITH_JWT_MULTITENANT_SUCCESS,
+      payload: null,
+    });
     sessionStorage.clear();
     history.push("/");
-  }
-}
+  };
+};
 
-export const logoutWithFirebase = user => {
-  return dispatch => {
-    dispatch({ type: "LOGOUT_WITH_FIREBASE", payload: {} })
-    history.push("/pages/login")
-  }
-}
+export const logoutWithFirebase = (user) => {
+  return (dispatch) => {
+    dispatch({ type: "LOGOUT_WITH_FIREBASE", payload: {} });
+    history.push("/pages/login");
+  };
+};
 
-export const changeRole = role => {
-  return dispatch => dispatch({ type: "CHANGE_ROLE", userRole: role })
-}
+export const changeRole = (role) => {
+  return (dispatch) => dispatch({ type: "CHANGE_ROLE", userRole: role });
+};

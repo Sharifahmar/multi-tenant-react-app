@@ -1,3 +1,3 @@
 export const MESSAGES_CONSTANTS = {
-    INVALID_TENANT: "In Valid Tenant Name"
+  INVALID_TENANT: "InValid Tenant Name",
 };
